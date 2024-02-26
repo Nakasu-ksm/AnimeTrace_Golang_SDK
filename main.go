@@ -8,9 +8,11 @@ import (
 
 func main() {
 	worker := animetrace.API()
-	worker.SetModel("anime_model_lovelive")
 	worker.SetMultiple(true)
+	worker.SetModel("anime_model_lovelive")
+
 	worker.SetAI(true)
+
 	imageBytes, err := os.ReadFile("demo.png")
 	if err != nil {
 		panic("画像の読み込みに失敗しました！")
