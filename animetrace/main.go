@@ -53,7 +53,7 @@ func (p *Params) SetModel(model string) {
 	p.Model = model
 
 }
-func (p Params) SetConfig(buffer *bytes.Buffer, imageBytes []byte) *multipart.Writer {
+func (p Params) SetImage(buffer *bytes.Buffer, imageBytes []byte) *multipart.Writer {
 
 	writer := multipart.NewWriter(buffer)
 	defer writer.Close()
@@ -80,7 +80,7 @@ type Params struct {
 }
 
 type Worker interface {
-	SetConfig(buffer *bytes.Buffer, imageBytes []byte) *multipart.Writer
+	SetImage(buffer *bytes.Buffer, imageBytes []byte) *multipart.Writer
 	SetMultiple(id int)
 	SetModel(model string)
 }
