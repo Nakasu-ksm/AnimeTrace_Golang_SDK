@@ -130,7 +130,7 @@ type WorkerType struct {
 	result *[]byte
 }
 
-func (wk WorkerType) IsReturnMulti() bool {
+func (wk *WorkerType) IsReturnMulti() bool {
 	if wk.p.Is_multi == 1 {
 		return true
 	}
