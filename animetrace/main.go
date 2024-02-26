@@ -149,6 +149,9 @@ type MultipleCharacter struct {
 type ResultBytes []byte
 
 func (wk *WorkerType) ConvertToJson() (error, Response) {
+	if wk.result == nil {
+		panic("このメソッドは、画像を認識した後にのみ呼び出すことができます。")
+	}
 	var err error
 	var resp Response
 	err = json.Unmarshal(*wk.result, &resp)
