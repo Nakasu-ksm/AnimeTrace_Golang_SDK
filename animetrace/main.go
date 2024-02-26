@@ -38,12 +38,13 @@ func (wk *WorkerType) Recognition() {
 	fmt.Println("識別終了！")
 	//fmt.Println(string(all))
 	//fmt.Println(all)
+	//fmt.Println(string(all))
 	wk.result = &all
 }
 func (wk *WorkerType) SetMultiple(id int) {
-	if id != 0 {
-		panic("自分でロジックを実装してください")
-	}
+	//if id != 0 {
+	//	panic("自分でロジックを実装してください")
+	//}
 	wk.p.Is_multi = id
 }
 
@@ -95,19 +96,27 @@ type Response struct {
 }
 
 type AnimeCharacter struct {
-	Box     [5]float64 `json:"box"`
-	Name    string     `json:"name"`
-	Cartoon string     `json:"cartoonname"`
-	Acc     float64    `json:"acc_percent"`
-	BoxId   string     `json:"box_id"`
+	Char    []MultipleCharacter `json:"char,omitempty"`
+	Box     [5]float64          `json:"box"`
+	Name    string              `json:"name,omitempty"`
+	Cartoon string              `json:"cartoonname,omitempty"`
+	Acc     float64             `json:"acc_percent"`
+	BoxId   string              `json:"box_id"`
+}
+
+type MultipleCharacter struct {
+	Name    string  `json:"name"`
+	Cartoon string  `json:"cartoonname"`
+	Acc     float64 `json:"acc"`
 }
 
 type ResultBytes []byte
 
 func (wk *WorkerType) ConvertToJson() Response {
 	//fmt.Println(*wk.p)
+	var err error
 	var resp Response
-	err := json.Unmarshal(*wk.result, &resp)
+	err = json.Unmarshal(*wk.result, &resp)
 	if err != nil {
 		panic("パースエラー")
 	}
@@ -119,4 +128,11 @@ type WorkerType struct {
 	writer *multipart.Writer
 	buffer *bytes.Buffer
 	result *[]byte
+}
+
+func (wk WorkerType) IsReturnMulti() bool {
+	if wk.p.Is_multi == 1 {
+		return true
+	}
+	return false
 }
