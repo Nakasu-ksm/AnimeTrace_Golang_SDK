@@ -3,6 +3,7 @@ package animetrace
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -54,7 +55,7 @@ func (wk *WorkerType) SetMultiple(bool2 bool) {
 }
 
 func (wk *WorkerType) SetModel(model string) {
-	fmt.Println(wk.p)
+	//fmt.Println(wk.p)
 	if wk.lock {
 		panic("画像アップロード後の設定変更はできません。")
 	}
@@ -104,7 +105,7 @@ type Worker interface {
 	SetImage(imageBytes []byte)
 	SetModel(model string)
 	SetAI(bool2 bool)
-	ConvertToJson() Response
+	ConvertToJson() (error, Response)
 	IsReturnMulti() bool
 	Recognition()
 	SetMultiple(bool2 bool)
@@ -147,15 +148,18 @@ type MultipleCharacter struct {
 
 type ResultBytes []byte
 
-func (wk *WorkerType) ConvertToJson() Response {
-	//fmt.Println(*wk.p)
+func (wk *WorkerType) ConvertToJson() (error, Response) {
 	var err error
 	var resp Response
 	err = json.Unmarshal(*wk.result, &resp)
 	if err != nil {
 		panic("パースエラー")
 	}
-	return resp
+	if resp.Code != 0 && resp.Code != 17720 {
+		return errors.New("error"), resp
+
+	}
+	return nil, resp
 }
 
 type WorkerType struct {
@@ -164,6 +168,7 @@ type WorkerType struct {
 	buffer *bytes.Buffer
 	result *[]byte
 	lock   bool
+	res    *Response
 }
 
 func (wk *WorkerType) IsReturnMulti() bool {
