@@ -41,21 +41,41 @@ func (wk *WorkerType) Recognition() {
 	//fmt.Println(string(all))
 	wk.result = &all
 }
-func (wk *WorkerType) SetMultiple(id int) {
+func (wk *WorkerType) SetMultiple(bool2 bool) {
+	if wk.lock {
+		panic("画像アップロード後の設定変更はできません。")
+	}
 	//if id != 0 {
 	//	panic("自分でロジックを実装してください")
 	//}
-	wk.p.Is_multi = id
+	if bool2 {
+		wk.p.Is_multi = 1
+	}
 }
 
 func (wk *WorkerType) SetModel(model string) {
+	if wk.lock {
+		panic("画像アップロード後の設定変更はできません。")
+	}
 	if _, ok := all_model_map[model]; !ok {
 		panic("認識モデルは存在しない。参考資料 https://docs.animedb.cn/#/introduction を参照。")
 	}
 	wk.p.Model = model
 
 }
+func (wk *WorkerType) SetAI(bool2 bool) {
+	if wk.lock {
+		panic("画像アップロード後の設定変更はできません。")
+	}
+	if bool2 {
+		wk.p.ai = 1
+	}
+}
 func (wk *WorkerType) SetImage(imageBytes []byte) {
+	if wk.lock {
+		panic("画像アップロード後の設定変更はできません。")
+	}
+	wk.lock = true
 	defer wk.writer.Close()
 	_ = wk.writer.WriteField("is_multi", strconv.Itoa(wk.p.Is_multi))
 	_ = wk.writer.WriteField("model", wk.p.Model)
@@ -71,14 +91,19 @@ func (wk *WorkerType) SetImage(imageBytes []byte) {
 func API() *WorkerType {
 	worker := WorkerType{}
 	worker.p = &Params{}
+	worker.lock = false
 	worker.buffer = new(bytes.Buffer)
 	worker.writer = multipart.NewWriter(worker.buffer)
 	return &worker
 }
 
+type Worker interface {
+}
+
 type Params struct {
 	Is_multi int
 	Model    string
+	ai       int
 }
 
 //
@@ -128,6 +153,7 @@ type WorkerType struct {
 	writer *multipart.Writer
 	buffer *bytes.Buffer
 	result *[]byte
+	lock   bool
 }
 
 func (wk *WorkerType) IsReturnMulti() bool {
