@@ -87,7 +87,7 @@ func (wk *WorkerType) SetImage(imageBytes []byte) {
 	h.Set("Content-Type", "image/png")
 	file_parameter, _ := wk.writer.CreatePart(h)
 	file_parameter.Write(imageBytes)
-	//wk.buffer.Write([]byte("\r\n" + "\r\n" + "--" + get_boundary + "--\r\n"))
+	wk.buffer.Write([]byte("\r\n" + "\r\n" + "--" + wk.writer.Boundary() + "--\r\n"))
 }
 
 func API() Worker {
@@ -117,13 +117,6 @@ type Params struct {
 	Model    string
 	ai       int
 }
-
-//
-//type Worker interface {
-//	SetImage(buffer *bytes.Buffer, imageBytes []byte) *multipart.Writer
-//	SetMultiple(id int)
-//	SetModel(model string)
-//}
 
 type Response struct {
 	Code    int              `json:"code"`
