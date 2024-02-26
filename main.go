@@ -16,7 +16,7 @@ func main() {
 		panic("画像の読み込みに失敗しました！")
 	}
 	buffer := new(bytes.Buffer)
-	writer := worker.SetConfig(buffer, imageBytes)
+	writer := worker.SetImage(buffer, imageBytes)
 	result := animetrace.Recognition(buffer, writer.FormDataContentType())
 	response := result.ConvertToJson()
 	fmt.Println(response.Data[0].Name)
