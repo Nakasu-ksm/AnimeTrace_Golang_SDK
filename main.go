@@ -8,8 +8,7 @@ import (
 )
 
 func main() {
-	var worker animetrace.Worker
-	worker = animetrace.API()
+	worker := animetrace.API()
 	worker.SetMultiple(0)
 	worker.SetModel("anime_model_lovelive")
 	imageBytes, err := os.ReadFile("demo.png")
