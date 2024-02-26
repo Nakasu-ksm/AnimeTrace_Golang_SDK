@@ -11,6 +11,14 @@ import (
 	"strconv"
 )
 
+var all_model_map = map[string]int{
+	"anime_model_lovelive": 0,
+	"pre_stable":           0,
+	"anime":                0,
+	"game":                 0,
+	"game_model_kirakira":  0,
+}
+
 func Recognition(buffer *bytes.Buffer, boundary string) ResultBytes {
 	client := http.Client{}
 	apiUrl := "https://aiapiv2.animedb.cn/ai/api/detect"
@@ -31,7 +39,20 @@ func Recognition(buffer *bytes.Buffer, boundary string) ResultBytes {
 
 	return all
 }
+func (p *Params) SetMultiple(id int) {
+	if id != 0 {
+		panic("自分でロジックを実装してください")
+	}
+	p.Is_multi = id
+}
 
+func (p *Params) SetModel(model string) {
+	if _, ok := all_model_map[model]; !ok {
+		panic("認識モデルは存在しない。参考資料 https://docs.animedb.cn/#/introduction を参照。")
+	}
+	p.Model = model
+
+}
 func (p Params) SetConfig(buffer *bytes.Buffer, imageBytes []byte) *multipart.Writer {
 
 	writer := multipart.NewWriter(buffer)
@@ -49,6 +70,10 @@ func (p Params) SetConfig(buffer *bytes.Buffer, imageBytes []byte) *multipart.Wr
 	return writer
 }
 
+func API() *Params {
+	return &Params{}
+}
+
 type Params struct {
 	Is_multi int
 	Model    string
@@ -56,6 +81,8 @@ type Params struct {
 
 type Worker interface {
 	SetConfig(buffer *bytes.Buffer, imageBytes []byte) *multipart.Writer
+	SetMultiple(id int)
+	SetModel(model string)
 }
 
 type Response struct {
