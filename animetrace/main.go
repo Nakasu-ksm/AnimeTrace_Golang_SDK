@@ -54,6 +54,7 @@ func (wk *WorkerType) SetMultiple(bool2 bool) {
 }
 
 func (wk *WorkerType) SetModel(model string) {
+	fmt.Println(wk.p)
 	if wk.lock {
 		panic("画像アップロード後の設定変更はできません。")
 	}
@@ -88,16 +89,25 @@ func (wk *WorkerType) SetImage(imageBytes []byte) {
 	//wk.buffer.Write([]byte("\r\n" + "\r\n" + "--" + get_boundary + "--\r\n"))
 }
 
-func API() *WorkerType {
+func API() Worker {
+	var worker_return Worker
 	worker := WorkerType{}
 	worker.p = &Params{}
 	worker.lock = false
 	worker.buffer = new(bytes.Buffer)
 	worker.writer = multipart.NewWriter(worker.buffer)
-	return &worker
+	worker_return = &worker
+	return worker_return
 }
 
 type Worker interface {
+	SetImage(imageBytes []byte)
+	SetModel(model string)
+	SetAI(bool2 bool)
+	ConvertToJson() Response
+	IsReturnMulti() bool
+	Recognition()
+	SetMultiple(bool2 bool)
 }
 
 type Params struct {
