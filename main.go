@@ -19,7 +19,10 @@ func main() {
 	}
 	worker.SetImage(imageBytes)
 	worker.Recognition()
-	jsonReturn := worker.ConvertToJson()
+	err, jsonReturn := worker.ConvertToJson()
+	if err != nil {
+		panic("画像認識異常")
+	}
 	if worker.IsReturnMulti() {
 		fmt.Println(jsonReturn.Data[0].Char[0].Name)
 	} else {
