@@ -9,7 +9,9 @@ import (
 
 func main() {
 	var worker animetrace.Worker
-	worker = animetrace.Params{Is_multi: 0, Model: "anime_model_lovelive"}
+	worker = &animetrace.Params{}
+	worker.SetMultiple(0)
+	worker.SetModel("anime")
 	imageBytes, err := os.ReadFile("demo.png")
 	if err != nil {
 		panic("画像の読み込みに失敗しました！")
