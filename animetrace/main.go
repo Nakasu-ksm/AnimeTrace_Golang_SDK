@@ -109,6 +109,7 @@ type Worker interface {
 	IsReturnMulti() bool
 	Recognition()
 	SetMultiple(bool2 bool)
+	GetResultString() string
 }
 
 type Params struct {
@@ -179,4 +180,8 @@ func (wk *WorkerType) IsReturnMulti() bool {
 		return true
 	}
 	return false
+}
+
+func (wk *WorkerType) GetResultString() string {
+	return string(*wk.result)
 }
