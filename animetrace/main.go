@@ -22,7 +22,7 @@ var all_model_map = map[string]int{
 
 func (wk *WorkerType) Recognition() {
 	client := http.Client{}
-	apiUrl := "https://aiapiv2.animedb.cn/ai/api/detect"
+	apiUrl := "https://api.animetrace.com/v1/search"
 
 	req, err := http.NewRequest("POST", apiUrl, wk.buffer)
 	req.Header.Set("Content-Type", wk.writer.FormDataContentType())
@@ -63,8 +63,8 @@ func (wk *WorkerType) SetModel(model string) {
 		panic("認識モデルは存在しない。参考資料 https://docs.animedb.cn/#/introduction を参照。")
 	}
 	wk.p.Model = model
-
 }
+
 func (wk *WorkerType) SetAI(bool2 bool) {
 	if wk.lock {
 		panic("画像アップロード後の設定変更はできません。")
@@ -83,7 +83,7 @@ func (wk *WorkerType) SetImage(imageBytes []byte) {
 	_ = wk.writer.WriteField("model", wk.p.Model)
 
 	h := make(textproto.MIMEHeader)
-	h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, "image", "1.jpg"))
+	h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, "file", "1.jpg"))
 	h.Set("Content-Type", "image/png")
 	file_parameter, _ := wk.writer.CreatePart(h)
 	file_parameter.Write(imageBytes)
@@ -126,18 +126,16 @@ type Response struct {
 }
 
 type AnimeCharacter struct {
-	Char    []MultipleCharacter `json:"char,omitempty"`
+	Char    []MultipleCharacter `json:"character,omitempty"`
 	Box     [5]float64          `json:"box"`
 	Name    string              `json:"name,omitempty"`
-	Cartoon string              `json:"cartoonname,omitempty"`
-	Acc     float64             `json:"acc_percent"`
+	Cartoon string              `json:"work,omitempty"`
 	BoxId   string              `json:"box_id"`
 }
 
 type MultipleCharacter struct {
-	Name    string  `json:"name"`
-	Cartoon string  `json:"cartoonname"`
-	Acc     float64 `json:"acc"`
+	Name    string `json:"character"`
+	Cartoon string `json:"work"`
 }
 
 type ResultBytes []byte
